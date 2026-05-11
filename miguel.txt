@@ -1,0 +1,6 @@
+https://github.com/miguelpamplona07/meuprojeto.git
+
+git config --global user.name "miguelpamplona7"
+git config --global user.email "icsmiguelpamplona07@gmail.com"
+ 
+git remote add origin https://github.com/miguelpamplona07/meuprojeto.git
