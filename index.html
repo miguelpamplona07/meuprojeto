@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>NASA APOD</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background: #111; color: white; padding: 20px; }
+        img, iframe { max-width: 80%; height: auto; border-radius: 8px; margin-top: 20px; }
+        p { max-width: 600px; margin: 20px auto; line-height: 1.6; text-align: justify; }
+        .filtro { background: #222; padding: 15px; border-radius: 8px; display: inline-block; margin-bottom: 20px; }
+        input, button { padding: 8px; font-size: 16px; border-radius: 4px; border: none; margin: 5px; }
+        button { background: #007bff; color: white; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h1>Astronomy Picture of the Day</h1>
+
+    <div class="filtro">
+        <label>Escolha uma data:</label>
+        <input type="date" id="data_escolhida">
+        <button onclick="buscarDados()">Buscar</button>
+    </div>
+
+    <hr>
+
+    <h2 id="titulo">Carregando...</h2>
+    <h3 id="data_exibicao"></h3>
+    
+    <div id="media_container"></div>
+    
+    <p id="explicacao"></p>
+
+    <script>
+        // Define a data atual no input
+        const hoje = new Date().toISOString().split('T')[0];
+        document.getElementById('data_escolhida').value = hoje;
+
+        async function buscarDados() {
+            const data = document.getElementById('data_escolhida').value;
+            const url = `https://api.nasa.gov/planetary/apod?api_key=1ZoAIosng9t1bPCyG8uXWDejAjrpYEiJ330G3L4t&date=${data}`;
+            
+            document.getElementById('titulo').innerText = 'Buscando...';
+            document.getElementById('explicacao').innerText = '';
+            document.getElementById('media_container').innerHTML = '';
+            
+            try {
+                const response = await fetch(url);
+                const info = await response.json();
+                
+                if (info.code) {
+                    document.getElementById('titulo').innerText = 'Erro: ' + info.msg;
+                    return;
+                }
+
+                document.getElementById('titulo').innerText = info.title;
+                document.getElementById('data_exibicao').innerText = 'Data: ' + info.date;
+                document.getElementById('explicacao').innerText = info.explanation;
+                
+                const mediaContainer = document.getElementById('media_container');
+                if (info.media_type === 'video') {
+                    mediaContainer.innerHTML = `<iframe src="${info.url}" width="600" height="400" frameborder="0" allowfullscreen></iframe>`;
+                } else {
+                    mediaContainer.innerHTML = `<img src="${info.url}" alt="NASA Image">`;
+                }
+            } catch (error) {
+                document.getElementById('titulo').innerText = 'Erro ao conectar com a API da NASA.';
+            }
+        }
+
+        // Busca a imagem do dia atual ao carregar a página
+        buscarDados();
+    </script>
+</body>
+</html>
